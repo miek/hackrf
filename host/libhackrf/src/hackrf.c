@@ -1694,6 +1694,7 @@ int ADDCALL hackrf_init_sweep(hackrf_device* device,
 							  int length)
 {
 	int result, i;
+	int size = length * sizeof(frequency_list[0]);
 
 	for(i=0; i<length; i++)
 		frequency_list[i] = TO_LE(frequency_list[i]);
@@ -1705,11 +1706,11 @@ int ADDCALL hackrf_init_sweep(hackrf_device* device,
 		0,
 		0,
 		(unsigned char*)frequency_list,
-		length,
+		size,
 		0
 	);
 
-	if (result < length) {
+	if (result < size) {
 		return HACKRF_ERROR_LIBUSB;
 	} else {
 		return HACKRF_SUCCESS;
