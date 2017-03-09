@@ -30,6 +30,7 @@ SET(TOOLS
 	hackrf_spiflash
 	hackrf_cpldjtag
 	hackrf_info
+	hackrf_operacake
 	hackrf_debug
 	hackrf_sweep
 )
