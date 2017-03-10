@@ -64,6 +64,8 @@
 
 i2c_bus_t* const oc_bus = &i2c0;
 uint8_t operacake_boards[8] = {0,0,0,0,0,0,0,0};
+static uint8_t stored_PA = OPERACAKE_PA1;
+static uint8_t stored_PB = OPERACAKE_PB1;
 
 /* read single register */
 uint8_t operacake_read_reg(i2c_bus_t* const bus, uint8_t address, uint8_t reg) {
@@ -141,6 +143,8 @@ uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 
 	pa = port_to_pins(PA);
 	pb = port_to_pins(PB);
+	stored_PA = PA;
+	stored_PB = PB;
 		
 	reg = (OPERACAKE_GPIO_DISABLE | side
 					| pa | pb | OPERACAKE_EN_LEDS);
