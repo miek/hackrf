@@ -42,6 +42,7 @@ extern "C"
 #include "sgpio.h"
 #include "rf_path.h"
 #include "cpld_jtag.h"
+#include "operacake.h"
 
 /* hardware identification number */
 #define BOARD_ID_JAWBREAKER 1
@@ -261,6 +262,7 @@ extern sgpio_config_t sgpio_config;
 extern rf_path_t rf_path;
 extern jtag_t jtag_cpld;
 extern i2c_bus_t i2c0;
+extern operacake_ext_ctrl_t operacake_ext_ctrl;
 
 void cpu_clock_init(void);
 void cpu_clock_pll1_low_speed(void);

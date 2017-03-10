@@ -79,6 +79,13 @@ static struct gpio_t gpio_sync_in_b		= GPIO(3,  11);
 static struct gpio_t gpio_sync_out_a		= GPIO(3, 8);
 static struct gpio_t gpio_sync_out_b		= GPIO(3, 9);
 
+/* Operacake interface */
+static struct gpio_t gpio_operacake_u1ctrl  = GPIO(3, 8);
+static struct gpio_t gpio_operacake_u2ctrl0 = GPIO(3, 12);
+static struct gpio_t gpio_operacake_u2ctrl1 = GPIO(3, 13);
+static struct gpio_t gpio_operacake_u3ctrl0 = GPIO(3, 14);
+static struct gpio_t gpio_operacake_u3ctrl1 = GPIO(3, 15);
+
 /* RF supply (VAA) control */
 #ifdef HACKRF_ONE
 static struct gpio_t gpio_vaa_disable		= GPIO(2, 9);
@@ -291,6 +298,14 @@ jtag_gpio_t jtag_gpio_cpld = {
 
 jtag_t jtag_cpld = {
 	.gpio = &jtag_gpio_cpld,
+};
+
+operacake_ext_ctrl_t operacake_ext_ctrl = {
+	.u1ctrl  = &gpio_operacake_u1ctrl,
+	.u2ctrl0 = &gpio_operacake_u2ctrl0,
+	.u2ctrl1 = &gpio_operacake_u2ctrl1,
+	.u3ctrl0 = &gpio_operacake_u3ctrl0,
+	.u3ctrl1 = &gpio_operacake_u3ctrl1,
 };
 
 void delay(uint32_t duration)

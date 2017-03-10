@@ -28,6 +28,7 @@ extern "C"
 #endif
 
 #include <stdint.h>
+#include "gpio.h"
 #include "i2c_bus.h"
 
 #define OPERACAKE_PA1 0
@@ -39,6 +40,14 @@ extern "C"
 #define OPERACAKE_PB2 5
 #define OPERACAKE_PB3 6
 #define OPERACAKE_PB4 7
+
+typedef struct operacake_ext_ctrl_t {
+	gpio_t u1ctrl;
+	gpio_t u2ctrl0;
+	gpio_t u2ctrl1;
+	gpio_t u3ctrl0;
+	gpio_t u3ctrl1;
+} operacake_ext_ctrl_t;
 
 /* Up to 8 Operacake boards can be used with one HackRF */
 extern uint8_t operacake_boards[8];
