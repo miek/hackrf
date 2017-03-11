@@ -64,6 +64,7 @@
 
 i2c_bus_t* const oc_bus = &i2c0;
 uint8_t operacake_boards[8] = {0,0,0,0,0,0,0,0};
+static uint8_t quick_mode_enabled = false;
 static uint8_t stored_PA = OPERACAKE_PA1;
 static uint8_t stored_PB = OPERACAKE_PB1;
 
@@ -82,6 +83,13 @@ void operacake_write_reg(i2c_bus_t* const bus, uint8_t address, uint8_t reg, uin
 }
 
 uint8_t operacake_init(void) {
+	/* Init GPIO (isolated by bus switch so OK to leave as output all the time) */
+	gpio_output(operacake_ext_ctrl.u1ctrl);
+	gpio_output(operacake_ext_ctrl.u2ctrl0);
+	gpio_output(operacake_ext_ctrl.u2ctrl1);
+	gpio_output(operacake_ext_ctrl.u3ctrl0);
+	gpio_output(operacake_ext_ctrl.u3ctrl1);
+
 	uint8_t reg, addr, i, j = 0;
 	/* Find connected operacakes */
 	for(i=0; i<8; i++) {
@@ -120,6 +128,45 @@ uint8_t port_to_pins(uint8_t port) {
 	return 0xFF;
 }
 
+static void operacake_set_gpios(uint8_t PA, uint8_t PB) {
+	switch (PA) {
+		case OPERACAKE_PA1:
+			gpio_clear(operacake_ext_ctrl.u2ctrl1);
+			gpio_clear(operacake_ext_ctrl.u2ctrl0);
+			break;
+		case OPERACAKE_PA2:
+			gpio_clear(operacake_ext_ctrl.u2ctrl1);
+			gpio_set(operacake_ext_ctrl.u2ctrl0);
+			break;
+		case OPERACAKE_PA3:
+			gpio_set(operacake_ext_ctrl.u2ctrl1);
+			gpio_clear(operacake_ext_ctrl.u2ctrl0);
+			break;
+		case OPERACAKE_PA4:
+			gpio_set(operacake_ext_ctrl.u2ctrl1);
+			gpio_set(operacake_ext_ctrl.u2ctrl0);
+			break;
+	}
+	switch (PB) {
+		case OPERACAKE_PB1:
+			gpio_clear(operacake_ext_ctrl.u3ctrl1);
+			gpio_clear(operacake_ext_ctrl.u3ctrl0);
+			break;
+		case OPERACAKE_PB2:
+			gpio_clear(operacake_ext_ctrl.u3ctrl1);
+			gpio_set(operacake_ext_ctrl.u3ctrl0);
+			break;
+		case OPERACAKE_PB3:
+			gpio_set(operacake_ext_ctrl.u3ctrl1);
+			gpio_clear(operacake_ext_ctrl.u3ctrl0);
+			break;
+		case OPERACAKE_PB4:
+			gpio_set(operacake_ext_ctrl.u3ctrl1);
+			gpio_set(operacake_ext_ctrl.u3ctrl0);
+			break;
+	}
+}
+
 uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 	uint8_t side, pa, pb, reg;
 	/* Start with some error checking,
@@ -145,10 +192,31 @@ uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 	pb = port_to_pins(PB);
 	stored_PA = PA;
 	stored_PB = PB;
-		
-	reg = (OPERACAKE_GPIO_DISABLE | side
-					| pa | pb | OPERACAKE_EN_LEDS);
-	operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, reg);
+
+	if (quick_mode_enabled) {
+		operacake_set_gpios(PA, PB);
+	} else {
+		reg = (OPERACAKE_GPIO_DISABLE | side
+						| pa | pb | OPERACAKE_EN_LEDS);
+		operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, reg);
+	}
 	return 0;
 }
 
+void operacake_set_quick_mode(uint8_t address, uint8_t enable)
+{
+	// TODO: handle multiple boards properly
+	if (enable && !quick_mode_enabled) {
+		quick_mode_enabled = true;
+		operacake_set_ports(address, stored_PA, stored_PB);
+		operacake_write_reg(oc_bus, address,
+		                    OPERACAKE_REG_CONFIG, OPERACAKE_CONFIG_QUICK_MODE);
+		operacake_write_reg(oc_bus, address,
+		                    OPERACAKE_REG_OUTPUT, OPERACAKE_GPIO_EN | OPERACAKE_EN_LEDS);
+	} else if (!enable && quick_mode_enabled) {
+		quick_mode_enabled = false;
+		operacake_set_ports(address, stored_PA, stored_PB);
+		operacake_write_reg(oc_bus, address,
+		                    OPERACAKE_REG_CONFIG, OPERACAKE_CONFIG_ALL_OUTPUT);
+	}
+}

@@ -54,6 +54,7 @@ extern uint8_t operacake_boards[8];
 
 uint8_t operacake_init(void);
 uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB);
+void operacake_set_quick_mode(uint8_t address, uint8_t enable);
 
 #ifdef __cplusplus
 }
