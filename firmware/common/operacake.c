@@ -19,6 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "gpio_lpc.h"
 #include "operacake.h"
 #include "hackrf_core.h"
 
@@ -129,42 +130,9 @@ uint8_t port_to_pins(uint8_t port) {
 }
 
 static void operacake_set_gpios(uint8_t PA, uint8_t PB) {
-	switch (PA) {
-		case OPERACAKE_PA1:
-			gpio_clear(operacake_ext_ctrl.u2ctrl1);
-			gpio_clear(operacake_ext_ctrl.u2ctrl0);
-			break;
-		case OPERACAKE_PA2:
-			gpio_clear(operacake_ext_ctrl.u2ctrl1);
-			gpio_set(operacake_ext_ctrl.u2ctrl0);
-			break;
-		case OPERACAKE_PA3:
-			gpio_set(operacake_ext_ctrl.u2ctrl1);
-			gpio_clear(operacake_ext_ctrl.u2ctrl0);
-			break;
-		case OPERACAKE_PA4:
-			gpio_set(operacake_ext_ctrl.u2ctrl1);
-			gpio_set(operacake_ext_ctrl.u2ctrl0);
-			break;
-	}
-	switch (PB) {
-		case OPERACAKE_PB1:
-			gpio_clear(operacake_ext_ctrl.u3ctrl1);
-			gpio_clear(operacake_ext_ctrl.u3ctrl0);
-			break;
-		case OPERACAKE_PB2:
-			gpio_clear(operacake_ext_ctrl.u3ctrl1);
-			gpio_set(operacake_ext_ctrl.u3ctrl0);
-			break;
-		case OPERACAKE_PB3:
-			gpio_set(operacake_ext_ctrl.u3ctrl1);
-			gpio_clear(operacake_ext_ctrl.u3ctrl0);
-			break;
-		case OPERACAKE_PB4:
-			gpio_set(operacake_ext_ctrl.u3ctrl1);
-			gpio_set(operacake_ext_ctrl.u3ctrl0);
-			break;
-	}
+	gpio_port_t *port = operacake_ext_ctrl.u1ctrl->port;
+	port->mask = ~((1 << 12) | (1 << 13) | (1 << 14) | (1 << 15));
+	port->mpin = ((PA & 0x3) << 12) | ((PB & 0x3) << 14);
 }
 
 uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
