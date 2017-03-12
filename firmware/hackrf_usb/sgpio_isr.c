@@ -53,6 +53,7 @@ void sgpio_isr_rx() {
 		: "r0"
 	);
 	usb_bulk_buffer_offset = (usb_bulk_buffer_offset + 32) & usb_bulk_buffer_mask;
+	operacake_counter -= 32;
 }
 
 void sgpio_isr_tx() {

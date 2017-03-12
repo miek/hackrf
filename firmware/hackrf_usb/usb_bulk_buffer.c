@@ -24,3 +24,4 @@
 
 const uint32_t usb_bulk_buffer_mask = 32768 - 1;
 volatile uint32_t usb_bulk_buffer_offset = 0;
+volatile int32_t operacake_counter = 0;

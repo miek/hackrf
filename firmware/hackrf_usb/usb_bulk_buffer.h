@@ -34,5 +34,6 @@ extern uint8_t usb_bulk_buffer[32768];
 extern const uint32_t usb_bulk_buffer_mask;
 
 extern volatile uint32_t usb_bulk_buffer_offset;
+extern volatile int32_t operacake_counter;
 
 #endif/*__USB_BULK_BUFFER_H__*/

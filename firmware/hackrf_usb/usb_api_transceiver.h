@@ -27,6 +27,8 @@
 #include <usb_type.h>
 #include <usb_request.h>
 
+extern volatile int operacake_pa;
+
 void set_hw_sync_mode(const hw_sync_mode_t new_hw_sync_mode);
 usb_request_status_t usb_vendor_request_set_transceiver_mode(
 	usb_endpoint_t* const endpoint,

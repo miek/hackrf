@@ -48,6 +48,9 @@
  
 #include "hackrf-ui.h"
 
+volatile int operacake_pa = 0;
+int operacake_pb = 4;
+
 static const usb_request_handler_fn vendor_request_handler[] = {
 	NULL,
 	usb_vendor_request_set_transceiver_mode,
@@ -192,6 +195,7 @@ int main(void) {
 	
 	rf_path_init(&rf_path);
 	operacake_init();
+	operacake_set_quick_mode(25, 1);
 
 	unsigned int phase = 0;
 
@@ -207,6 +211,12 @@ int main(void) {
 		}
 
 		start_streaming_on_hw_sync();
+
+		if (transceiver_mode() == TRANSCEIVER_MODE_RX && operacake_counter <= 0) {
+			operacake_set_ports(25, operacake_pa, operacake_pb);
+			operacake_pa = (operacake_pa + 1) % 4;
+			operacake_counter = 64;
+		}
 
 		// Set up IN transfer of buffer 0.
 		if ( usb_bulk_buffer_offset >= 16384

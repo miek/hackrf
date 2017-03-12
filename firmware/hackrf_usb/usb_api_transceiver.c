@@ -39,6 +39,7 @@
 #include <stddef.h>
 
 #include "usb_endpoint.h"
+#include "usb_bulk_buffer.h"
 
 typedef struct {
 	uint32_t freq_mhz;
@@ -291,6 +292,8 @@ usb_request_status_t usb_vendor_request_set_transceiver_mode(
 	const usb_transfer_stage_t stage)
 {
 	if( stage == USB_TRANSFER_STAGE_SETUP ) {
+		operacake_pa = 0;
+		operacake_counter = 64;
 		switch( endpoint->setup.value ) {
 		case TRANSCEIVER_MODE_OFF:
 		case TRANSCEIVER_MODE_RX:
