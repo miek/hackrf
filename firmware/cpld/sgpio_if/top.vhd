@@ -38,6 +38,8 @@ entity top is
         DA              : in    std_logic_vector(7 downto 0);
         DD              : out   std_logic_vector(9 downto 0);
 
+        B2AUX           : in    std_logic_vector(15 downto 0);
+
         CODEC_CLK       : in    std_logic;
         CODEC_X2_CLK    : in    std_logic
     );
@@ -48,6 +50,8 @@ architecture Behavioral of top is
     signal codec_clk_i : std_logic;
     signal adc_data_i : std_logic_vector(7 downto 0);
     signal dac_data_o : std_logic_vector(9 downto 0);
+    signal b2aux_msb_data_i : std_logic_vector(7 downto 0);
+    signal b2aux_lsb_data_i : std_logic_vector(7 downto 0);
 
     signal host_clk_i : std_logic;
 
@@ -68,6 +72,8 @@ architecture Behavioral of top is
     signal rx_q_invert_mask : std_logic_vector(7 downto 0);
     signal tx_q_invert_mask : std_logic_vector(7 downto 0);
 
+    signal rx_logic : std_logic := '0';
+
 begin
     
     ------------------------------------------------
@@ -75,6 +81,8 @@ begin
     
     adc_data_i <= DA(7 downto 0);    
     DD(9 downto 0) <= dac_data_o;
+    b2aux_msb_data_i <= B2AUX(15 downto 8);
+    b2aux_lsb_data_i <= B2AUX(7 downto 0);
     
     ------------------------------------------------
     -- Clocks
@@ -126,11 +134,20 @@ begin
     begin
         if rising_edge(host_clk_i) then
             if codec_clk_i = '1' then
-                -- I: non-inverted between MAX2837 and MAX5864
-                data_to_host_o <= adc_data_i xor X"80";
+                if rx_logic = '0' then
+                    -- I: non-inverted between MAX2837 and MAX5864
+                    data_to_host_o <= adc_data_i xor X"80";
+                else
+                    data_to_host_o <= b2aux_msb_data_i;
+                end if;
             else
-                -- Q: inverted between MAX2837 and MAX5864
-                data_to_host_o <= adc_data_i xor rx_q_invert_mask;
+                rx_logic <= not rx_logic;
+                if rx_logic = '0' then
+                    -- Q: inverted between MAX2837 and MAX5864
+                    data_to_host_o <= adc_data_i xor rx_q_invert_mask;
+                else
+                    data_to_host_o <= b2aux_lsb_data_i;
+                end if;
             end if;
         end if;
     end process;
