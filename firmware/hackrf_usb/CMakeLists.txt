@@ -43,6 +43,7 @@ set(SRC_M4
 	usb_device.c
 	usb_endpoint.c
 	usb_api_board_info.c
+	usb_api_counter.c
 	usb_api_cpld.c
 	usb_api_register.c
 	usb_api_spiflash.c

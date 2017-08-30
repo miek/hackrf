@@ -140,7 +140,7 @@ uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 	/* Check which side PA and PB are on */
 	if(((PA <= OPERACAKE_PA4) && (PB <= OPERACAKE_PA4))
 	    || ((PA > OPERACAKE_PA4) && (PB > OPERACAKE_PA4))) {
-		return 1;
+		// return 1;
 	}
 	
 	if(PA > OPERACAKE_PA4) {
@@ -154,6 +154,9 @@ uint8_t operacake_set_ports(uint8_t address, uint8_t PA, uint8_t PB) {
 		
 	reg = (OPERACAKE_GPIO_DISABLE | side
 					| pa | pb | OPERACAKE_EN_LEDS);
+	if (PA == 0 && PB == 0) {
+		reg = OPERACAKE_GPIO_ENABLE | OPERACAKE_EN_LEDS;
+	}
 	operacake_write_reg(oc_bus, address, OPERACAKE_REG_OUTPUT, reg);
 	return 0;
 }

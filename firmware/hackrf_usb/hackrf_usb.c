@@ -39,6 +39,7 @@
 #include "usb_device.h"
 #include "usb_endpoint.h"
 #include "usb_api_board_info.h"
+#include "usb_api_counter.h"
 #include "usb_api_cpld.h"
 #include "usb_api_register.h"
 #include "usb_api_spiflash.h"
@@ -109,6 +110,9 @@ static usb_request_handler_fn vendor_request_handler[] = {
 	NULL,
 #endif
 	usb_vendor_request_set_ui_enable,
+	usb_vendor_request_counter_start,
+	usb_vendor_request_counter_stop,
+	usb_vendor_request_counter_set
 };
 
 static const uint32_t vendor_request_handler_count =
