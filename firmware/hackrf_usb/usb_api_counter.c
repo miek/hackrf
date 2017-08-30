@@ -103,20 +103,22 @@ usb_request_status_t usb_vendor_request_counter_start(
 
 
 		// GIMA Configuration
-		GIMA_CTIN_1_IN = 0x2 << 4 | BIT2;  // Route SGPIO12 to SCTIN1
+		GIMA_CTIN_1_IN = 0x2 << 4;  // Route SGPIO12 to SCTIN1
 
 
-		SCT_CONFIG |= SCT_CONFIG_UNIFY_32_BIT |
-		  SCT_CONFIG_CLKMODE_PRESCALED_BUS_CLOCK |
-		  SCT_CONFIG_CKSEL_RISING_EDGES_ON_INPUT_1;
+#define SGPIO_CLK_PRESCALE
+
+		SCT_CONFIG |= SCT_CONFIG_UNIFY_32_BIT
+#ifdef SGPIO_CLK_PRESCALE
+		| SCT_CONFIG_CLKMODE_PRESCALED_BUS_CLOCK
+		| SCT_CONFIG_CKSEL_RISING_EDGES_ON_INPUT_1
+#endif
+;
 
 		SCT_CTRL = SCT_CTRL_HALT_L(1);
 
 		// Prescaler
 		SCT_CTRL |= SCT_CTRL_PRE_L(5);
-
-		// SCT_CONFIG |= SCT_CONFIG_CLKMODE_PRESCALED_BUS_CLOCK |
-		//   SCT_CONFIG_CKSEL_RISING_EDGES_ON_INPUT_1;
 
 		// Maximum counter value
 		if (endpoint->setup.value) {
