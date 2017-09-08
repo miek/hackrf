@@ -249,6 +249,7 @@ void sgpio_cpld_stream_disable(sgpio_config_t* const config) {
 	(void)config;
 	// Disable codec data stream.
 	SGPIO_GPIO_OUTREG |= (1L << 10); /* SGPIO10 */
+	// TODO: Reset SCTimer for betterer antenna switching
 }
 
 bool sgpio_cpld_stream_is_enabled(sgpio_config_t* const config) {

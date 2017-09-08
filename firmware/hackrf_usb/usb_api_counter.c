@@ -77,22 +77,24 @@ usb_request_status_t usb_vendor_request_counter_start(
 
 
 		/* SGPIO bits ------------- */
-		SGPIO_CTRL_ENABLE &= (!BIT3 && 0xFFFF);  // Disable slice 3
+		SGPIO_CTRL_ENABLE &= (!BIT3 && 0xFFFF); // Disable slice 3 (D)
 
 		SGPIO_OUT_MUX_CFG12 =
-			SGPIO_OUT_MUX_CFG_P_OUT_CFG(0x0) | // 1-bit output mode
-			SGPIO_OUT_MUX_CFG_P_OE_CFG(0);     // gpio_oe
+			SGPIO_OUT_MUX_CFG_P_OUT_CFG(0x08) | // clkout output mode
+			SGPIO_OUT_MUX_CFG_P_OE_CFG(0);      // gpio_oe
 
 		SGPIO_GPIO_OENREG |= BIT12;
 
+		// Use SGPIO_CLK (on SGPIO8 at 2x samplerate) for the clock
 		SGPIO_MUX_CFG3 =
-			SGPIO_MUX_CFG_EXT_CLK_ENABLE(0) |  // Internal clock
-			SGPIO_MUX_CFG_CONCAT_ENABLE(1)  |  // Concatenate data
-			SGPIO_MUX_CFG_CONCAT_ORDER(0);     // Loop the data
+			SGPIO_MUX_CFG_EXT_CLK_ENABLE(1)      | // External clock (pin)
+			SGPIO_MUX_CFG_CLK_SOURCE_PIN_MODE(0) | // Use SGPIO8 (SGPIO_CLK) for the clock source
+			SGPIO_MUX_CFG_CONCAT_ENABLE(1)       | // Concatenate data
+			SGPIO_MUX_CFG_CONCAT_ORDER(0);         // Loop the data
 
-		SGPIO_SLICE_MUX_CFG3 = 0x00;  // Defaults are fine
+		SGPIO_SLICE_MUX_CFG3 = SGPIO_SLICE_MUX_CFG_CLKGEN_MODE(0x1); // Use external clock
 
-		SGPIO_PRESET3 = 4080; // Generate a 50 kHz clock
+		SGPIO_PRESET3 = 0; // Generate a samplerate*2 clock
 
 		SGPIO_POS3 = SGPIO_POS_POS(0x20 - 1) | SGPIO_POS_POS_RESET(0x20 - 1);
 
@@ -118,7 +120,7 @@ usb_request_status_t usb_vendor_request_counter_start(
 		SCT_CTRL = SCT_CTRL_HALT_L(1);
 
 		// Prescaler
-		SCT_CTRL |= SCT_CTRL_PRE_L(5);
+		SCT_CTRL |= SCT_CTRL_PRE_L(0);
 
 		// Maximum counter value
 		if (endpoint->setup.value) {
@@ -228,8 +230,21 @@ usb_request_status_t usb_vendor_request_counter_start(
 usb_request_status_t usb_vendor_request_counter_stop(
 		usb_endpoint_t* const endpoint, const usb_transfer_stage_t stage) {
 	if (stage == USB_TRANSFER_STAGE_SETUP) {
-		// Stop timer
-		SCT_CTRL |= SCT_CTRL_HALT_L(1);
+		uint16_t index = endpoint->setup.index;
+		if (index > 0) {
+			if (index & BIT0) {
+				SGPIO_OUT_MUX_CFG12 =
+				  SGPIO_OUT_MUX_CFG_P_OUT_CFG(0x00) | // 1-bit output mode
+				  SGPIO_OUT_MUX_CFG_P_OE_CFG(0);      // gpio_oe
+			} else {
+				SGPIO_OUT_MUX_CFG12 =
+				  SGPIO_OUT_MUX_CFG_P_OUT_CFG(0x08) | // clkout output mode
+				  SGPIO_OUT_MUX_CFG_P_OE_CFG(0);      // gpio_oe
+			}
+		} else {
+			// Stop timer
+			SCT_CTRL |= SCT_CTRL_HALT_L(1);
+		}
 
 		usb_transfer_schedule_ack(endpoint->in);
 	}
