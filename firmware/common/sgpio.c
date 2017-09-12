@@ -1,6 +1,7 @@
 /*
  * Copyright 2012 Jared Boone <jared@sharebrained.com>
  * Copyright 2013 Benjamin Vernoux <titanmkd@gmail.com>
+ * Copyright 2017 Schuyler St. Leger <schuyler.st.leger@gmail.com>
  *
  * This file is part of HackRF.
  *
@@ -26,6 +27,7 @@
 #include <hackrf_core.h>
 
 #include <sgpio.h>
+#include "../hackrf_usb/usb_api_counter.h"
 
 #ifdef RAD1O
 static void update_q_invert(sgpio_config_t* const config);
@@ -249,7 +251,8 @@ void sgpio_cpld_stream_disable(sgpio_config_t* const config) {
 	(void)config;
 	// Disable codec data stream.
 	SGPIO_GPIO_OUTREG |= (1L << 10); /* SGPIO10 */
-	// TODO: Reset SCTimer for betterer antenna switching
+
+	reset_operacake_counter_state();
 }
 
 bool sgpio_cpld_stream_is_enabled(sgpio_config_t* const config) {

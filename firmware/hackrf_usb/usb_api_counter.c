@@ -279,3 +279,10 @@ usb_request_status_t usb_vendor_request_counter_set(
 	}
 	return USB_REQUEST_STATUS_OK;
 }
+
+void reset_operacake_counter_state() {
+	SCT_CTRL |= SCT_CTRL_HALT_L(1) | SCT_CTRL_CLRCTR_L(1);
+	SCT_STATE = 0;
+	SCT_OUTPUT = BIT14;
+	SCT_CTRL &= ~(SCT_CTRL_HALT_L(1) | SCT_CTRL_CLRCTR_L(1));
+}
