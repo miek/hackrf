@@ -126,6 +126,8 @@ static struct gpio_t gpio_cpld_tdi			= GPIO(3,  4);
 static struct gpio_t gpio_hw_sync_enable = GPIO(5,12);
 static struct gpio_t gpio_rx_q_invert 		= GPIO(0, 13);
 
+static struct gpio_t gpio_tcxo_enable       = GPIO(5, 9);
+
 i2c_bus_t i2c0 = {
 	.obj = (void*)I2C0_BASE,
 	.start = i2c_lpc_start,
@@ -790,6 +792,10 @@ void pin_setup(void) {
 #endif
 
 	gpio_output(&gpio_1v8_enable);
+
+	scu_pinmux(P3_2, SCU_GPIO_FAST | SCU_CONF_FUNCTION4);
+	gpio_output(&gpio_tcxo_enable);
+	gpio_set(&gpio_tcxo_enable);
 
 #ifdef HACKRF_ONE
 	/* Configure RF power supply (VAA) switch control signal as output */
