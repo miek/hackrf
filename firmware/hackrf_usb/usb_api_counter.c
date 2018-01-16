@@ -127,27 +127,27 @@ usb_request_status_t usb_vendor_request_counter_start(
 			SCT_MATCH3 = endpoint->setup.value;
 			SCT_MATCHREL3 = endpoint->setup.value;
 		} else {
-			SCT_MATCH3 = 16384;
-			SCT_MATCHREL3 = 16384;
+			SCT_MATCH3 = 1024 * 4 - 1;
+			SCT_MATCHREL3 = 1024 * 4 - 1;
 		}
 
 		// Dwell time
 		if (endpoint->setup.index) {
 			uint32_t dwell_time = endpoint->setup.index;
-			SCT_MATCH0 = dwell_time;
-			SCT_MATCHREL0 = dwell_time;
-			SCT_MATCH1 = dwell_time * 2;
-			SCT_MATCHREL1 = dwell_time * 2;
-			SCT_MATCH2 = dwell_time * 3;
-			SCT_MATCHREL2 = dwell_time * 3;
+			SCT_MATCH0 = dwell_time - 1;
+			SCT_MATCHREL0 = dwell_time - 1;
+			SCT_MATCH1 = dwell_time * 2 - 1;
+			SCT_MATCHREL1 = dwell_time * 2 - 1;
+			SCT_MATCH2 = dwell_time * 3 - 1;
+			SCT_MATCHREL2 = dwell_time * 3 - 1;
 		} else {
-			uint32_t dwell_time = 1024;
-			SCT_MATCH0 = dwell_time;
-			SCT_MATCHREL0 = dwell_time;
-			SCT_MATCH1 = dwell_time * 2;
-			SCT_MATCHREL1 = dwell_time * 2;
-			SCT_MATCH2 = dwell_time * 3;
-			SCT_MATCHREL2 = dwell_time * 3;
+			uint32_t dwell_time = 1024 - 1;
+			SCT_MATCH0 = dwell_time - 1;
+			SCT_MATCHREL0 = dwell_time - 1;
+			SCT_MATCH1 = dwell_time * 2 - 1;
+			SCT_MATCHREL1 = dwell_time * 2 - 1;
+			SCT_MATCH2 = dwell_time * 3 - 1;
+			SCT_MATCHREL2 = dwell_time * 3 - 1;
 		}
 
 		// Event 0 triggered by MATCH0. Event 1 triggered by MATCH1.
@@ -266,9 +266,9 @@ usb_request_status_t usb_vendor_request_counter_set(
 		// Dwell time
 		if (endpoint->setup.index) {
 			uint32_t dwell_time = endpoint->setup.index;
-			SCT_MATCHREL0 = dwell_time;
-			SCT_MATCHREL1 = dwell_time * 2;
-			SCT_MATCHREL2 = dwell_time * 3;
+			SCT_MATCHREL0 = dwell_time - 1;
+			SCT_MATCHREL1 = dwell_time * 2 - 1;
+			SCT_MATCHREL2 = dwell_time * 3 - 1;
 		}
 
 		// SCT_STATE = 0;
