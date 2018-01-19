@@ -77,31 +77,11 @@ usb_request_status_t usb_vendor_request_counter_start(
 
 
 		/* SGPIO bits ------------- */
-		SGPIO_CTRL_ENABLE &= (!BIT3 && 0xFFFF); // Disable slice 3 (D)
-
 		SGPIO_OUT_MUX_CFG12 =
 			SGPIO_OUT_MUX_CFG_P_OUT_CFG(0x08) | // clkout output mode
 			SGPIO_OUT_MUX_CFG_P_OE_CFG(0);      // gpio_oe
 
 		SGPIO_GPIO_OENREG |= BIT12;
-
-		// Use SGPIO_CLK (on SGPIO8 at 2x samplerate) for the clock
-		SGPIO_MUX_CFG3 =
-			SGPIO_MUX_CFG_EXT_CLK_ENABLE(1)      | // External clock (pin)
-			SGPIO_MUX_CFG_CLK_SOURCE_PIN_MODE(0) | // Use SGPIO8 (SGPIO_CLK) for the clock source
-			SGPIO_MUX_CFG_CONCAT_ENABLE(1)       | // Concatenate data
-			SGPIO_MUX_CFG_CONCAT_ORDER(0);         // Loop the data
-
-		SGPIO_SLICE_MUX_CFG3 = SGPIO_SLICE_MUX_CFG_CLKGEN_MODE(0x1); // Use external clock
-
-		SGPIO_PRESET3 = 0; // Generate a samplerate*2 clock
-
-		SGPIO_POS3 = SGPIO_POS_POS(0x20 - 1) | SGPIO_POS_POS_RESET(0x20 - 1);
-
-		SGPIO_REG3 = 0xAAAAAAAA; // Data to generate clock signal
-		SGPIO_REG_SS13 = 0xAAAAAAAA;
-
-		SGPIO_CTRL_ENABLE |= BIT3;
 
 
 		// GIMA Configuration
