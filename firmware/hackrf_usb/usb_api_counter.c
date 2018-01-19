@@ -178,7 +178,7 @@ usb_request_status_t usb_vendor_request_counter_start(
 		U3CTRL1_CLR = SCT_OUT8_CLR_CLR0(1) | SCT_OUT8_CLR_CLR3(1);
 
 		// Event 3 toggles output 5.
-		// #define ONESIDE // enable to not cross A and B
+		#define ONESIDE // Use only 4 antennas, and stay on the same side; comment for 8 antennas
 #ifndef ONESIDE
 		U1CTRL_SET = SCT_OUT14_SET_SET3(1);
 		U1CTRL_CLR = SCT_OUT14_CLR_CLR3(1);
