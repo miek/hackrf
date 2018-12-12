@@ -27,7 +27,7 @@
 #include <hackrf_core.h>
 
 #include <sgpio.h>
-#include "../hackrf_usb/usb_api_counter.h"
+#include "operacake_rotator.h"
 
 #ifdef RAD1O
 static void update_q_invert(sgpio_config_t* const config);
@@ -252,7 +252,7 @@ void sgpio_cpld_stream_disable(sgpio_config_t* const config) {
 	// Disable codec data stream.
 	SGPIO_GPIO_OUTREG |= (1L << 10); /* SGPIO10 */
 
-	reset_operacake_counter_state();
+	operacake_rotator_reset_state();
 }
 
 bool sgpio_cpld_stream_is_enabled(sgpio_config_t* const config) {
