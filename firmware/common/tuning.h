@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+extern bool tuning_invert_spectrum;
 bool set_freq(const uint64_t freq);
 bool set_freq_explicit(const uint64_t if_freq_hz, const uint64_t lo_freq_hz,
         const rf_path_filter_t path);

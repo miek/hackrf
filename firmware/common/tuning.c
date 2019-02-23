@@ -46,6 +46,8 @@
 #define MIN_LO_FREQ_HZ (84375000)
 #define MAX_LO_FREQ_HZ (5400000000ULL)
 
+bool tuning_invert_spectrum = false;
+
 static uint32_t max2837_freq_nominal_hz=2560000000;
 
 uint64_t freq_cache = 100000000;
@@ -81,14 +83,14 @@ bool set_freq(const uint64_t freq)
 		/* Set Freq and read real freq */
 		real_mixer_freq_hz = mixer_set_frequency(&mixer, mixer_freq_mhz);
 		max2837_set_frequency(&max2837, real_mixer_freq_hz - freq);
-		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 1);
+		tuning_invert_spectrum = true;
 	}else if( (freq_mhz >= MIN_BYPASS_FREQ_MHZ) && (freq_mhz < MAX_BYPASS_FREQ_MHZ) )
 	{
 		rf_path_set_filter(&rf_path, RF_PATH_FILTER_BYPASS);
 		MAX2837_freq_hz = (freq_mhz * FREQ_ONE_MHZ) + freq_hz;
 		/* mixer_freq_mhz <= not used in Bypass mode */
 		max2837_set_frequency(&max2837, MAX2837_freq_hz);
-		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 0);
+		tuning_invert_spectrum = false;
 	}else if(  (freq_mhz >= MIN_HP_FREQ_MHZ) && (freq_mhz <= MAX_HP_FREQ_MHZ) )
 	{
 		if (freq_mhz < MID1_HP_FREQ_MHZ) {
@@ -106,7 +108,7 @@ bool set_freq(const uint64_t freq)
 		/* Set Freq and read real freq */
 		real_mixer_freq_hz = mixer_set_frequency(&mixer, mixer_freq_mhz);
 		max2837_set_frequency(&max2837, freq - real_mixer_freq_hz);
-		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 0);
+		tuning_invert_spectrum = false;
 	}else
 	{
 		/* Error freq_mhz too high */
@@ -143,9 +145,9 @@ bool set_freq_explicit(const uint64_t if_freq_hz, const uint64_t lo_freq_hz,
 	rf_path_set_filter(&rf_path, path);
 	max2837_set_frequency(&max2837, if_freq_hz);
 	if (lo_freq_hz > if_freq_hz) {
-		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 1);
+		tuning_invert_spectrum = true;
 	} else {
-		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 0);
+		tuning_invert_spectrum = false;
 	}
 	if (path != RF_PATH_FILTER_BYPASS) {
 		(void)mixer_set_frequency(&mixer, lo_freq_hz / FREQ_ONE_MHZ);
