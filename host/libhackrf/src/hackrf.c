@@ -2130,9 +2130,10 @@ int ADDCALL hackrf_set_operacake_ports(hackrf_device* device,
 		return HACKRF_ERROR_INVALID_PARAM;
 	}
 	/* Check which side PA and PB are on */
-	if(((port_a <= OPERACAKE_PA4) && (port_b <= OPERACAKE_PA4))
-	    || ((port_a > OPERACAKE_PA4) && (port_b > OPERACAKE_PA4))) {
-		// return HACKRF_ERROR_INVALID_PARAM;
+	if((((port_a <= OPERACAKE_PA4) && (port_b <= OPERACAKE_PA4))
+	    || ((port_a > OPERACAKE_PA4) && (port_b > OPERACAKE_PA4)))
+		&& !((port_a == 0) && (port_b == 0))) {
+		return HACKRF_ERROR_INVALID_PARAM;
 	}
 	result = libusb_control_transfer(
 		device->usb_device,
