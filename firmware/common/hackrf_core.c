@@ -240,7 +240,7 @@ w25q80bv_driver_t spi_flash = {
 sgpio_config_t sgpio_config = {
 	.gpio_rx_q_invert = &gpio_rx_q_invert,
 	.gpio_hw_sync_enable = &gpio_hw_sync_enable,
-	.slice_mode_multislice = true,
+	.slice_mode_multislice = false,
 };
 
 rf_path_t rf_path = {
@@ -684,7 +684,6 @@ void cpu_clock_init(void)
 	CCU1_CLK_APB3_ADC1_CFG = 0;
 	CCU1_CLK_APB3_CAN0_CFG = 0;
 	CCU1_CLK_APB3_DAC_CFG = 0;
-	CCU1_CLK_M4_DMA_CFG = 0;
 	CCU1_CLK_M4_EMC_CFG = 0;
 	CCU1_CLK_M4_EMCDIV_CFG = 0;
 	CCU1_CLK_M4_ETHERNET_CFG = 0;

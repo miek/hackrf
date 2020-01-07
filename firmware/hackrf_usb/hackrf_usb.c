@@ -22,8 +22,10 @@
 
 #include <stddef.h>
 
+#include <libopencm3/cm3/vector.h>
 #include <libopencm3/lpc43xx/m4/nvic.h>
 
+#include <gpdma.h>
 #include <streaming.h>
 
 #include "tuning.h"
@@ -176,6 +178,15 @@ static bool cpld_jtag_sram_load(jtag_t* const jtag) {
 	return success;
 }
 
+volatile bool transfer_ready = false;
+volatile int count = 0;
+
+void dma_irq(void) {
+	gpdma_channel_interrupt_tc_clear(0);
+	transfer_ready = true;
+	led_toggle(2);
+}
+
 int main(void) {
 	bool operacake_allow_gpio;
 	pin_setup();
@@ -228,7 +239,9 @@ int main(void) {
 	}
 	operacake_init(operacake_allow_gpio);
 
-	unsigned int phase = 0;
+	vector_table.irq[NVIC_DMA_IRQ] = dma_irq;
+
+	unsigned int phase = 1;
 
 	while(true) {
 		// Check whether we need to initiate a CPLD update
@@ -242,9 +255,10 @@ int main(void) {
 		}
 
 		// Set up IN transfer of buffer 0.
-		if ( usb_bulk_buffer_offset >= 16384
+		if ( transfer_ready
 		     && phase == 1
 		     && transceiver_mode() != TRANSCEIVER_MODE_OFF) {
+			transfer_ready = false;
 			usb_transfer_schedule_block(
 				(transceiver_mode() == TRANSCEIVER_MODE_RX)
 				? &usb_endpoint_bulk_in : &usb_endpoint_bulk_out,
@@ -256,9 +270,10 @@ int main(void) {
 		}
 
 		// Set up IN transfer of buffer 1.
-		if ( usb_bulk_buffer_offset < 16384
+		if ( transfer_ready
 		     && phase == 0
 		     && transceiver_mode() != TRANSCEIVER_MODE_OFF) {
+			transfer_ready = false;
 			usb_transfer_schedule_block(
 				(transceiver_mode() == TRANSCEIVER_MODE_RX)
 				? &usb_endpoint_bulk_in : &usb_endpoint_bulk_out,
@@ -272,3 +287,4 @@ int main(void) {
 
 	return 0;
 }
+

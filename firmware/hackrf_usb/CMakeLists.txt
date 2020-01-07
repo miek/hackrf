@@ -33,6 +33,7 @@ add_custom_command(
 
 set(SRC_M4
 	hackrf_usb.c
+	"${PATH_HACKRF_FIRMWARE_COMMON}/gpdma.c"
 	"${PATH_HACKRF_FIRMWARE_COMMON}/tuning.c"
 	"${PATH_HACKRF_FIRMWARE_COMMON}/streaming.c"
 	sgpio_isr.c
