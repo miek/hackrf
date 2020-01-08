@@ -114,13 +114,14 @@ begin
             codec_clk_rx_i <= CODEC_CLK;
             adc_data_i <= DA(7 downto 0);
             if (transfer_direction_i = from_adc) then
-                if codec_clk_rx_i = '1' then
-                    -- I: non-inverted between MAX2837 and MAX5864
-                    data_to_host_o <= adc_data_i xor X"80";
-                else
-                    -- Q: inverted between MAX2837 and MAX5864
-                    data_to_host_o <= adc_data_i xor rx_q_invert_mask;
-                end if;
+                --if codec_clk_rx_i = '1' then
+                --    -- I: non-inverted between MAX2837 and MAX5864
+                --    data_to_host_o <= adc_data_i xor X"80";
+                --else
+                --    -- Q: inverted between MAX2837 and MAX5864
+                --    data_to_host_o <= adc_data_i xor rx_q_invert_mask;
+                --end if;
+                data_to_host_o <= data_to_host_o + 1;
             end if;
         end if;
     end process;
