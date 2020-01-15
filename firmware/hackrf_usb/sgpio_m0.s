@@ -68,10 +68,6 @@ main:
 	ldr r1,  [r7, #0]  // 2
 	stm r6!, {r0-r1}
 
-	ldr r0, =0x400f4048
-	ldr r1, =0x1
-	strb r1, [r0]
-
 	// Finally, update the buffer location...
 	ldr r0, =TARGET_BUFFER_MASK
 	and r0, r6, r0         // r0 = (position_in_buffer + size_copied) % buffer_size
