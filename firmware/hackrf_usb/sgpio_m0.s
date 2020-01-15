@@ -13,9 +13,10 @@
 .equ SGPIO_GPIO_INPUT,                     0x40101210
 
 
-// Buffer that we're funneling data to.
+// Buffer that we're funneling data to/from.
 .equ TARGET_DATA_BUFFER,                   0x20008000
 .equ TARGET_BUFFER_POSITION,               0x20007000
+.equ TARGET_BUFFER_TX,                     0x20007004
 .equ TARGET_BUFFER_MASK,                   0x7fff
 
 .global main
@@ -41,11 +42,11 @@ main:
 	// Grab the base address of the SGPIO shadow registers...
 	ldr r7, =SGPIO_SHADOW_REGISTERS_BASE
 
-	// ... and grab the address of the buffer segment we want to write to.
+	// ... and grab the address of the buffer segment we want to write to / read from.
 	ldr r0, =TARGET_DATA_BUFFER       // r0 = &buffer
 	ldr r3, =TARGET_BUFFER_POSITION   // r3 = &position_in_buffer
 	ldr r2, [r3]                      // r2 = position_in_buffer
-	add r6, r0, r2                    // r6 = write_target = &buffer + position_in_buffer
+	add r6, r0, r2                    // r6 = buffer_target = &buffer + position_in_buffer
 
 	mov r8, r3                        // Store &position_in_buffer.
 
@@ -53,6 +54,32 @@ main:
 	//     L  -> F  -> K  -> C -> J  -> E  -> I  -> A
 	// Which has equivalent shadow register offsets:
 	//     44 -> 20 -> 40 -> 8 -> 36 -> 16 -> 32 -> 0
+
+	// Load direction (TX or RX)
+	ldr r0, =TARGET_BUFFER_TX
+	ldr r0, [r0]
+
+	// TX?
+	lsr r0, #1
+	bcc direction_rx
+
+direction_tx:
+
+	ldm r6!, {r0-r5}
+	str r0,  [r7, #44]
+	str r1,  [r7, #20]
+	str r2,  [r7, #40]
+	str r3,  [r7, #8 ]
+	str r4,  [r7, #36]
+	str r5,  [r7, #16]
+
+	ldm r6!, {r0-r1}
+	str r0,  [r7, #32]
+	str r1,  [r7, #0]
+
+	b done
+
+direction_rx:
 
 	// 8 cycles
 	ldr r0,  [r7, #44] // 2
@@ -67,6 +94,8 @@ main:
 	ldr r0,  [r7, #32] // 2
 	ldr r1,  [r7, #0]  // 2
 	stm r6!, {r0-r1}
+
+done:
 
 	// Finally, update the buffer location...
 	ldr r0, =TARGET_BUFFER_MASK
