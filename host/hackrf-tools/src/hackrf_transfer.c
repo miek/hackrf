@@ -114,6 +114,7 @@ typedef enum {
         TRANSCEIVER_MODE_RX = 1,
         TRANSCEIVER_MODE_TX = 2,
         TRANSCEIVER_MODE_SS = 3,
+        TRANSCEIVER_MODE_SGPIO_DEBUG = 4,
 } transceiver_mode_t;
 
 typedef enum {
@@ -325,6 +326,7 @@ volatile uint32_t byte_count = 0;
 
 bool signalsource = false;
 uint32_t amplitude = 0;
+bool sgpiodebug = false;
 
 bool hw_sync = false;
 uint32_t hw_sync_enable = 0;
@@ -481,6 +483,25 @@ int tx_callback(hackrf_transfer* transfer) {
 		} else {
 			return 0;
 		}
+	} else if (transceiver_mode == TRANSCEIVER_MODE_SGPIO_DEBUG) {
+		/* Transmit continuous wave with specific amplitude */
+		byte_count += transfer->valid_length;
+		bytes_to_read = transfer->valid_length;
+		if (limit_num_samples) {
+			if (bytes_to_read >= bytes_to_xfer) {
+				bytes_to_read = bytes_to_xfer;
+			}
+			bytes_to_xfer -= bytes_to_read;
+		}
+
+		for(i = 0;i<bytes_to_read;i++)
+			transfer->buffer[i] = (uint8_t)amplitude++;
+
+		if (limit_num_samples && (bytes_to_xfer == 0)) {
+			return -1;
+		} else {
+			return 0;
+		}
 	} else {
         return -1;
     }
@@ -521,6 +542,7 @@ static void usage() {
 	printf("\t[-b baseband_filter_bw_hz] # Set baseband filter bandwidth in Hz.\n\tPossible values: 1.75/2.5/3.5/5/5.5/6/7/8/9/10/12/14/15/20/24/28MHz, default <= 0.75 * sample_rate_hz.\n" );
 	printf("\t[-C ppm] # Set Internal crystal clock error in ppm.\n");
 	printf("\t[-H hw_sync_enable] # Synchronise USB transfer using GPIO pins.\n");
+	printf("\t[-G] # SGPIO debug.\n");
 }
 
 static hackrf_device* device = NULL;
@@ -563,7 +585,7 @@ int main(int argc, char** argv) {
 	float time_diff;
 	unsigned int lna_gain=8, vga_gain=20, txvga_gain=0;
   
-	while( (opt = getopt(argc, argv, "H:wr:t:f:i:o:m:a:p:s:n:b:l:g:x:c:d:C:RS:h?")) != EOF )
+	while( (opt = getopt(argc, argv, "H:wr:t:f:i:o:m:a:p:s:n:b:l:g:x:c:d:C:RGS:h?")) != EOF )
 	{
 		result = HACKRF_SUCCESS;
 		switch( opt ) 
@@ -669,6 +691,11 @@ int main(int argc, char** argv) {
                 case 'C':
 			crystal_correct = true;
 			result = parse_u32(optarg, &crystal_correct_ppm);
+			break;
+
+		case 'G':
+			sgpiodebug = true;
+			requested_mode_count++;
 			break;
 
 		case 'h':
@@ -846,6 +873,10 @@ int main(int argc, char** argv) {
 		}
 	}
 
+	if (sgpiodebug) {
+		transceiver_mode = TRANSCEIVER_MODE_SGPIO_DEBUG;
+	}
+
 	if( receive_wav )
 	{
 		time (&rawtime);
@@ -859,7 +890,7 @@ int main(int argc, char** argv) {
 	}	
 
 	// In signal source mode, the PATH argument is neglected.
-	if (transceiver_mode != TRANSCEIVER_MODE_SS) {
+	if (transceiver_mode != TRANSCEIVER_MODE_SS && transceiver_mode != TRANSCEIVER_MODE_SGPIO_DEBUG) {
 		if( path == NULL ) {
 			fprintf(stderr, "specify a path to a file to transmit/receive\n");
 			usage();
@@ -889,7 +920,7 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 	
-	if (transceiver_mode != TRANSCEIVER_MODE_SS) {
+	if (transceiver_mode != TRANSCEIVER_MODE_SS && transceiver_mode != TRANSCEIVER_MODE_SGPIO_DEBUG) {
 		if( transceiver_mode == TRANSCEIVER_MODE_RX )
 		{
 			if (strcmp(path, "-") == 0) {
@@ -1107,7 +1138,7 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		if(transmit || signalsource) {
+		if(transmit || signalsource || sgpiodebug) {
 			result = hackrf_stop_tx(device);
 			if( result != HACKRF_SUCCESS ) {
 				fprintf(stderr, "hackrf_stop_tx() failed: %s (%d)\n", hackrf_error_name(result), result);
