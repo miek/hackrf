@@ -138,9 +138,9 @@ static void usb_endpoint_enable(
 ) {
 	const uint_fast8_t endpoint_number = usb_endpoint_number(endpoint->address);
 	if( usb_endpoint_is_in(endpoint->address) ) {
-		USB0_ENDPTCTRL(endpoint_number) |= (USB0_ENDPTCTRL_TXE | USB0_ENDPTCTRL_TXR);
+		USB0_ENDPTCTRL(endpoint_number) |= USB0_ENDPTCTRL_TXE;
 	} else {
-		USB0_ENDPTCTRL(endpoint_number) |= (USB0_ENDPTCTRL_RXE | USB0_ENDPTCTRL_RXR);
+		USB0_ENDPTCTRL(endpoint_number) |= USB0_ENDPTCTRL_RXE;
 	}
 }
 
