@@ -17,12 +17,12 @@ if (LIBUSB_INCLUDE_DIR AND LIBUSB_LIBRARIES)
   set(LIBUSB_FOUND TRUE)
 
 else (LIBUSB_INCLUDE_DIR AND LIBUSB_LIBRARIES)
-  IF (NOT WIN32)
+  #IF (NOT WIN32)
     # use pkg-config to get the directories and then use these values
     # in the FIND_PATH() and FIND_LIBRARY() calls
     find_package(PkgConfig)
     pkg_check_modules(PC_LIBUSB libusb-1.0)
-  ENDIF(NOT WIN32)
+  #ENDIF(NOT WIN32)
 
   set(LIBUSB_LIBRARY_NAME usb-1.0)
   IF(${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")

@@ -1,0 +1,9 @@
+{
+  "name": "hackrf",
+  "version-string": "v2021.03.1",
+  "dependencies": [
+    "fftw3",
+    "libusb",
+    "pthreads"
+  ]
+}

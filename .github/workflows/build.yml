@@ -34,13 +34,19 @@ jobs:
         sudo apt install libfftw3-dev libusb-1.0-0-dev
       if: matrix.os == 'ubuntu-latest'
 
+    - uses: lukka/run-vcpkg@v10
+      if: matrix.os == 'windows-latest'
+      with:
+        runVcpkgInstall: true
+        vcpkgGitCommitId: 5568f110b509a9fd90711978a7cb76bae75bb092
+
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/host/build
 
     - name: Configure CMake
       shell: bash
       working-directory: ${{runner.workspace}}/host/build
-      run: cmake $GITHUB_WORKSPACE/host/ -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake '${{github.workspace}}/host/' -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/host/build
