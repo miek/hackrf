@@ -281,18 +281,22 @@ static const max2839_ft_t max2839_ft[] = {
 	{ 28000000, MAX2839_FT_28M },
 	{        0, 0 },
 };
-//clang-format on
 
-uint32_t max2839_set_lpf_bandwidth(max2839_driver_t* const drv, const uint32_t bandwidth_hz) {
+// clang-format on
+
+uint32_t max2839_set_lpf_bandwidth(
+	max2839_driver_t* const drv,
+	const uint32_t bandwidth_hz)
+{
 	const max2839_ft_t* p = max2839_ft;
-	while( p->bandwidth_hz != 0 ) {
-		if( p->bandwidth_hz >= bandwidth_hz ) {
+	while (p->bandwidth_hz != 0) {
+		if (p->bandwidth_hz >= bandwidth_hz) {
 			break;
 		}
 		p++;
 	}
 
-	if( p->bandwidth_hz != 0 ) {
+	if (p->bandwidth_hz != 0) {
 		set_MAX2839_FT(drv, p->ft);
 		max2839_regs_commit(drv);
 	}
@@ -300,45 +304,48 @@ uint32_t max2839_set_lpf_bandwidth(max2839_driver_t* const drv, const uint32_t b
 	return p->bandwidth_hz;
 }
 
-bool max2839_set_lna_gain(max2839_driver_t* const drv, const uint32_t gain_db) {
+bool max2839_set_lna_gain(max2839_driver_t* const drv, const uint32_t gain_db)
+{
 	uint16_t val;
-	switch(gain_db){
-		case 40:
-			val = MAX2839_LNA2gain_MAX;
-			break;
-		case 32:
-			val = MAX2839_LNA2gain_M8;
-			break;
-		case 24:
-			// FIXME correct missing settings with VGA adjustment?
-		case 16:
-			val = MAX2839_LNA2gain_M16;
-			break;
-		case 8:
-		case 0:
-			val = MAX2839_LNA2gain_M32;
-			break;
-		default:
-			return false;
+	switch (gain_db) {
+	case 40:
+		val = MAX2839_LNA2gain_MAX;
+		break;
+	case 32:
+		val = MAX2839_LNA2gain_M8;
+		break;
+	case 24:
+		// FIXME correct missing settings with VGA adjustment?
+	case 16:
+		val = MAX2839_LNA2gain_M16;
+		break;
+	case 8:
+	case 0:
+		val = MAX2839_LNA2gain_M32;
+		break;
+	default:
+		return false;
 	}
 	set_MAX2839_LNA2gain(drv, val);
 	max2839_reg_commit(drv, 6);
 	return true;
 }
 
-bool max2839_set_vga_gain(max2839_driver_t* const drv, const uint32_t gain_db) {
-	if( (gain_db & 0x1) || gain_db > 62) {/* 0b11111*2 */
+bool max2839_set_vga_gain(max2839_driver_t* const drv, const uint32_t gain_db)
+{
+	if ((gain_db & 0x1) || gain_db > 62) { /* 0b11111*2 */
 		return false;
-}
+	}
 
-	set_MAX2839_Rx2_VGAgain(drv, (63-gain_db));
+	set_MAX2839_Rx2_VGAgain(drv, (63 - gain_db));
 	max2839_reg_commit(drv, 6);
 	return true;
 }
 
-bool max2839_set_txvga_gain(max2839_driver_t* const drv, const uint32_t gain_db) {
-	uint16_t val=0;
-	val = 63-gain_db;
+bool max2839_set_txvga_gain(max2839_driver_t* const drv, const uint32_t gain_db)
+{
+	uint16_t val = 0;
+	val = 63 - gain_db;
 
 	set_MAX2839_TX_VGA_GAIN(drv, val);
 	max2839_reg_commit(drv, 29);
