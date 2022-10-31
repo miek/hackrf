@@ -113,6 +113,7 @@ begin
     begin
         if rising_edge(host_clk_i) then
             codec_clk_rx_i <= CODEC_CLK;
+            codec_clk_tx_i <= not CODEC_CLK;
             adc_data_i <= DA(7 downto 0);
             if (transfer_direction_i = from_adc) then
                 if codec_clk_rx_i = '1' then
@@ -129,7 +130,6 @@ begin
     process(host_clk_i)
     begin
         if falling_edge(host_clk_i) then
-            codec_clk_tx_i <= CODEC_CLK;
             data_from_host_i <= HOST_DATA;
             if transfer_direction_i = to_dac then
                 if codec_clk_tx_i = '1' then
