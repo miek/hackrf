@@ -22,8 +22,8 @@
  */
 
 #include "usb_api_board_info.h"
-#include "platform_detect.h"
 #include "firmware_info.h"
+#include "platform/platform.h"
 
 #include <hackrf_core.h>
 #include <rom_iap.h>

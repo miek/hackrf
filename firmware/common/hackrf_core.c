@@ -34,7 +34,7 @@
 #include "i2c_bus.h"
 #include "i2c_lpc.h"
 #include "cpld_jtag.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 #include "clkin.h"
 #include <libopencm3/lpc43xx/cgu.h>
 #include <libopencm3/lpc43xx/ccu.h>

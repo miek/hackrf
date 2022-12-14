@@ -22,7 +22,7 @@
 
 #include "si5351c.h"
 #include "clkin.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 #include "gpio_lpc.h"
 #include "hackrf_core.h"
 #include <libopencm3/lpc43xx/scu.h>

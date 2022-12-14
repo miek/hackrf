@@ -19,7 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include "platform_detect.h"
+#include "platform.h"
 #include "firmware_info.h"
 #include "gpio_lpc.h"
 #include "hackrf_core.h"
@@ -221,3 +221,4 @@ uint32_t supported_platform(void)
 {
 	return firmware_info.supported_platform;
 }
+

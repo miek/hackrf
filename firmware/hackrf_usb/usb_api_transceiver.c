@@ -39,7 +39,7 @@
 #include "streaming.h"
 #include "usb.h"
 #include "usb_queue.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 
 #include <stddef.h>
 #include <string.h>

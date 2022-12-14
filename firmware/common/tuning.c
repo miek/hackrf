@@ -29,7 +29,7 @@
 #include "max2839.h"
 #include "sgpio.h"
 #include "operacake.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 
 #define FREQ_ONE_MHZ (1000ULL * 1000)
 

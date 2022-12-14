@@ -20,7 +20,7 @@
  */
 
 #include "hackrf_core.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 
 int main(void)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 Great Scott Gadgets <info@greatscottgadgets.com>
+ * Copyright 2022 Great Scott Gadgets <info@greatscottgadgets.com>
  *
  * This file is part of HackRF.
  *
@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __PLATFORM_DETECT_H__
-#define __PLATFORM_DETECT_H__
+#ifndef PLATFORM_PLATFORM_H
+#define PLATFORM_PLATFORM_H
 
 #include <stdint.h>
 
@@ -61,4 +61,4 @@ board_id_t detected_platform(void);
 board_rev_t detected_revision(void);
 uint32_t supported_platform(void);
 
-#endif //__PLATFORM_DETECT_H__
+#endif

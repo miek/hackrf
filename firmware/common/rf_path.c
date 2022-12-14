@@ -29,7 +29,7 @@
 
 #include "hackrf_ui.h"
 #include "gpio_lpc.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 #include "mixer.h"
 #include "max283x.h"
 #include "max2837.h"

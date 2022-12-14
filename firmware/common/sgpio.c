@@ -26,7 +26,7 @@
 #include <libopencm3/lpc43xx/sgpio.h>
 
 #include "hackrf_core.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 
 #include "sgpio.h"
 

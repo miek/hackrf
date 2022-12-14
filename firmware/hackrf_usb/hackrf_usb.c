@@ -55,7 +55,7 @@
 #include "cpld_xc2c.h"
 #include "portapack.h"
 #include "hackrf_ui.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 #include "clkin.h"
 
 extern uint32_t __m0_start__;
