@@ -56,8 +56,13 @@ typedef enum {
 	BOARD_REV_UNDETECTED = 0xFF, /* detection not yet attempted */
 } board_rev_t;
 
+typedef struct {
+
+} platform_t;
+
 void detect_hardware_platform(void);
 board_id_t detected_platform_id(void);
+platform_t* detected_platform(void);
 board_rev_t detected_revision(void);
 uint32_t supported_platform(void);
 

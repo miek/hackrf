@@ -28,7 +28,12 @@
 #include <libopencm3/lpc43xx/adc.h>
 
 static board_id_t platform_id = BOARD_ID_UNDETECTED;
+// TODO: return a struct with stub functions instead of NULL
+static platform_t* platform = NULL;
 static board_rev_t revision = BOARD_REV_UNDETECTED;
+
+extern platform_t platform_hackrf_og;
+extern platform_t platform_hackrf_r9;
 
 static struct gpio_t gpio2_9_on_P5_0 = GPIO(2, 9);
 static struct gpio_t gpio3_6_on_P6_10 = GPIO(3, 6);
@@ -151,24 +156,30 @@ void detect_hardware_platform(void)
 			halt_and_flash(3000000);
 		}
 		platform_id = BOARD_ID_JAWBREAKER;
+		// TODO: implement jawbreaker platform
+		platform = &platform_hackrf_og;
 		return;
 	case RAD1O_RESISTORS:
 		if (!(supported_platform() & PLATFORM_RAD1O)) {
 			halt_and_flash(3000000);
 		}
 		platform_id = BOARD_ID_RAD1O;
+		// TODO: implement rad1o platform
+		platform = &platform_hackrf_og;
 		return;
 	case HACKRF1_OG_RESISTORS:
 		if (!(supported_platform() & PLATFORM_HACKRF1_OG)) {
 			halt_and_flash(3000000);
 		}
 		platform_id = BOARD_ID_HACKRF1_OG;
+		platform = &platform_hackrf_og;
 		break;
 	case HACKRF1_R9_RESISTORS:
 		if (!(supported_platform() & PLATFORM_HACKRF1_OG)) { //FIXME temporary
 			halt_and_flash(3000000);
 		}
 		platform_id = BOARD_ID_HACKRF1_R9;
+		platform = &platform_hackrf_r9;
 		break;
 	default:
 		platform_id = BOARD_ID_UNRECOGNIZED;
@@ -210,6 +221,11 @@ void detect_hardware_platform(void)
 board_id_t detected_platform_id(void)
 {
 	return platform_id;
+}
+
+platform_t* detected_platform(void)
+{
+    return platform;
 }
 
 board_rev_t detected_revision(void)
