@@ -110,11 +110,7 @@ bool set_freq(const uint64_t freq)
 		mixer_freq_mhz = freq_mhz - (max2837_freq_nominal_hz / FREQ_ONE_MHZ);
 		/* Set Freq and read real freq */
 		real_mixer_freq_hz = mixer_set_frequency(&mixer, mixer_freq_mhz);
-		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
-			max2839_set_frequency(&max2839, freq - real_mixer_freq_hz);
-		} else {
-			max2837_set_frequency(&max2837, freq - real_mixer_freq_hz);
-		}
+		max283x_set_frequency(&max283x, freq - real_mixer_freq_hz);
 		sgpio_cpld_stream_rx_set_q_invert(&sgpio_config, 0);
 	} else {
 		/* Error freq_mhz too high */
