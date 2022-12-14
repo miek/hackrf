@@ -203,7 +203,7 @@ void si5351c_configure_clock_control(
 	if (source == PLL_SOURCE_CLKIN) {
 		/* PLLB on CLKIN */
 		pll = SI5351C_CLK_PLL_SRC_B;
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			/*
 			 * HackRF One r9 always uses PLL A on the XTAL input
 			 * but externally switches that input to CLKIN.
@@ -213,7 +213,7 @@ void si5351c_configure_clock_control(
 	} else {
 		/* PLLA on XTAL */
 		pll = SI5351C_CLK_PLL_SRC_A;
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			gpio_clear(&gpio_h1r9_clkin_en);
 		}
 	}
@@ -251,7 +251,7 @@ void si5351c_configure_clock_control(
 		SI5351C_CLK_POWERDOWN |
 			SI5351C_CLK_INT_MODE /* not connected, but: PLL B int mode */
 	};
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		data[1] = SI5351C_CLK_INT_MODE | SI5351C_CLK_PLL_SRC_A |
 			SI5351C_CLK_SRC(SI5351C_CLK_SRC_MULTISYNTH_SELF) |
 			SI5351C_CLK_IDRV(SI5351C_CLK_IDRV_2MA);
@@ -281,7 +281,7 @@ void si5351c_enable_clock_outputs(si5351c_driver_t* const drv)
 	uint8_t clkout = 3;
 
 	/* HackRF One r9 has only three clock generator outputs. */
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		clkout = 2;
 		value = SI5351C_CLK_ENABLE(0) | SI5351C_CLK_ENABLE(1) |
 			SI5351C_CLK_DISABLE(3) | SI5351C_CLK_DISABLE(4) |
@@ -294,7 +294,7 @@ void si5351c_enable_clock_outputs(si5351c_driver_t* const drv)
 	uint8_t data[] = {SI5351C_REG_OUTPUT_EN, value};
 	si5351c_write(drv, data, sizeof(data));
 
-	if ((clkout_enabled) && (detected_platform() == BOARD_ID_HACKRF1_R9)) {
+	if ((clkout_enabled) && (detected_platform_id() == BOARD_ID_HACKRF1_R9)) {
 		gpio_set(&gpio_h1r9_clkout_en);
 	} else {
 		gpio_clear(&gpio_h1r9_clkout_en);
@@ -329,7 +329,7 @@ void si5351c_set_clock_source(si5351c_driver_t* const drv, const enum pll_source
 	}
 	si5351c_configure_clock_control(drv, source);
 	active_clock_source = source;
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		/* 25MHz XTAL * (0x0e00+512)/128 = 800mhz -> int mode */
 		uint8_t pll_data[] = {26, 0x00, 0x01, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00};
 		if (source == PLL_SOURCE_CLKIN) {
@@ -343,7 +343,7 @@ void si5351c_set_clock_source(si5351c_driver_t* const drv, const enum pll_source
 
 bool si5351c_clkin_signal_valid(si5351c_driver_t* const drv)
 {
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		uint32_t f = clkin_frequency();
 		return (f > 9000000) && (f < 11000000);
 	} else {
@@ -358,7 +358,7 @@ void si5351c_clkout_enable(si5351c_driver_t* const drv, uint8_t enable)
 	//FIXME this should be somewhere else
 	uint8_t clkout = 3;
 	/* HackRF One r9 has only three clock generator outputs. */
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		clkout = 2;
 	}
 	/* Configure clock to 10MHz */
@@ -370,7 +370,7 @@ void si5351c_clkout_enable(si5351c_driver_t* const drv, uint8_t enable)
 
 void si5351c_init(si5351c_driver_t* const drv)
 {
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		/* CLKIN_EN */
 		scu_pinmux(SCU_H1R9_CLKIN_EN, SCU_GPIO_FAST | SCU_CONF_FUNCTION4);
 		gpio_clear(&gpio_h1r9_clkin_en);

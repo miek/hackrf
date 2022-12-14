@@ -52,7 +52,7 @@ void sgpio_configure_pin_functions(sgpio_config_t* const config)
 	scu_pinmux(SCU_PINMUX_SGPIO14, SCU_GPIO_FAST | SCU_CONF_FUNCTION4); /* GPIO5[13] */
 	scu_pinmux(SCU_PINMUX_SGPIO15, SCU_GPIO_FAST | SCU_CONF_FUNCTION4); /* GPIO5[14] */
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		scu_pinmux(
 			SCU_H1R9_HW_SYNC_EN,
 			SCU_GPIO_FAST | SCU_CONF_FUNCTION4); /* GPIO5[5] */
@@ -345,7 +345,7 @@ void sgpio_cpld_stream_rx_set_q_invert(sgpio_config_t* const config, uint_fast8_
 	 * The RX IQ channels on HackRF One r9 are not inverted as they are
 	 * on OG or Jawbreaker, so the opposite setting is required.
 	 */
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		invert = (invert > 0) ? 0 : 1;
 	}
 	gpio_write(config->gpio_rx_q_invert, invert);

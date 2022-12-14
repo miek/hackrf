@@ -423,7 +423,7 @@ bool sample_rate_frac_set(uint32_t rate_num, uint32_t rate_denom)
 	MSx_P2 = (128 * b) % c;
 	MSx_P3 = c;
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		/*
 		 * On HackRF One r9 all sample clocks are externally derived
 		 * from MS1/CLK1 operating at twice the sample rate.
@@ -503,7 +503,7 @@ bool sample_rate_set(const uint32_t sample_rate_hz)
 		return false;
 	}
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		/*
 		 * On HackRF One r9 all sample clocks are externally derived
 		 * from MS1/CLK1 operating at twice the sample rate.
@@ -658,7 +658,7 @@ void cpu_clock_init(void)
 	 *   CLK7 -> LPC43xx (uses a 12MHz crystal by default)
 	 */
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		/* MS0/CLK0 is the reference for both RFFC5071 and MAX2839. */
 		si5351c_configure_multisynth(
 			&clock_gen,
@@ -829,7 +829,7 @@ void cpu_clock_init(void)
 	// CCU2_CLK_SDIO_CFG = 0;
 #endif
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		clkin_detect_init();
 	}
 }
@@ -936,7 +936,7 @@ void pin_setup(void)
 #endif
 
 	disable_1v8_power();
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 #ifdef HACKRF_ONE
 		gpio_output(&gpio_h1r9_1v8_enable);
 		scu_pinmux(SCU_H1R9_EN1V8, SCU_GPIO_FAST | SCU_CONF_FUNCTION0);
@@ -951,7 +951,7 @@ void pin_setup(void)
 	disable_rf_power();
 
 	/* Configure RF power supply (VAA) switch control signal as output */
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		gpio_output(&gpio_h1r9_vaa_disable);
 	} else {
 		gpio_output(&gpio_vaa_disable);
@@ -977,7 +977,7 @@ void pin_setup(void)
 	/* enable input on SCL and SDA pins */
 	SCU_SFSI2C0 = SCU_I2C0_NOMINAL;
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		spi_bus_start(&spi_bus_ssp1, &ssp_config_max2839);
 	} else {
 		spi_bus_start(&spi_bus_ssp1, &ssp_config_max2837);
@@ -986,7 +986,7 @@ void pin_setup(void)
 	mixer_bus_setup(&mixer);
 
 #ifdef HACKRF_ONE
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		rf_path.gpio_rx = &gpio_h1r9_rx;
 		sgpio_config.gpio_hw_sync_enable = &gpio_h1r9_hw_sync_enable;
 	}
@@ -1001,7 +1001,7 @@ void pin_setup(void)
 
 void enable_1v8_power(void)
 {
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 #ifdef HACKRF_ONE
 		gpio_set(&gpio_h1r9_1v8_enable);
 #endif
@@ -1012,7 +1012,7 @@ void enable_1v8_power(void)
 
 void disable_1v8_power(void)
 {
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 #ifdef HACKRF_ONE
 		gpio_clear(&gpio_h1r9_1v8_enable);
 #endif
@@ -1028,7 +1028,7 @@ void enable_rf_power(void)
 
 	/* many short pulses to avoid one big voltage glitch */
 	for (i = 0; i < 1000; i++) {
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			gpio_set(&gpio_h1r9_vaa_disable);
 			gpio_clear(&gpio_h1r9_vaa_disable);
 		} else {
@@ -1040,7 +1040,7 @@ void enable_rf_power(void)
 
 void disable_rf_power(void)
 {
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		gpio_set(&gpio_h1r9_vaa_disable);
 	} else {
 		gpio_set(&gpio_vaa_disable);

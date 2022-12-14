@@ -27,7 +27,7 @@
 #include <libopencm3/lpc43xx/scu.h>
 #include <libopencm3/lpc43xx/adc.h>
 
-static board_id_t platform = BOARD_ID_UNDETECTED;
+static board_id_t platform_id = BOARD_ID_UNDETECTED;
 static board_rev_t revision = BOARD_REV_UNDETECTED;
 
 static struct gpio_t gpio2_9_on_P5_0 = GPIO(2, 9);
@@ -150,28 +150,28 @@ void detect_hardware_platform(void)
 		if (!(supported_platform() & PLATFORM_JAWBREAKER)) {
 			halt_and_flash(3000000);
 		}
-		platform = BOARD_ID_JAWBREAKER;
+		platform_id = BOARD_ID_JAWBREAKER;
 		return;
 	case RAD1O_RESISTORS:
 		if (!(supported_platform() & PLATFORM_RAD1O)) {
 			halt_and_flash(3000000);
 		}
-		platform = BOARD_ID_RAD1O;
+		platform_id = BOARD_ID_RAD1O;
 		return;
 	case HACKRF1_OG_RESISTORS:
 		if (!(supported_platform() & PLATFORM_HACKRF1_OG)) {
 			halt_and_flash(3000000);
 		}
-		platform = BOARD_ID_HACKRF1_OG;
+		platform_id = BOARD_ID_HACKRF1_OG;
 		break;
 	case HACKRF1_R9_RESISTORS:
 		if (!(supported_platform() & PLATFORM_HACKRF1_OG)) { //FIXME temporary
 			halt_and_flash(3000000);
 		}
-		platform = BOARD_ID_HACKRF1_R9;
+		platform_id = BOARD_ID_HACKRF1_R9;
 		break;
 	default:
-		platform = BOARD_ID_UNRECOGNIZED;
+		platform_id = BOARD_ID_UNRECOGNIZED;
 		halt_and_flash(1000000);
 	}
 
@@ -180,23 +180,23 @@ void detect_hardware_platform(void)
 	pin_strap_t adc0_7 = check_pin_strap(7);
 
 	if ((adc0_3 == PIN_STRAP_ABSENT) && (adc0_4 == PIN_STRAP_ABSENT) &&
-	    (adc0_7 == PIN_STRAP_ABSENT) && (platform == BOARD_ID_HACKRF1_OG)) {
+	    (adc0_7 == PIN_STRAP_ABSENT) && (platform_id == BOARD_ID_HACKRF1_OG)) {
 		revision = BOARD_REV_HACKRF1_OLD;
 	} else if (
 		(adc0_3 == PIN_STRAP_HIGH) && (adc0_4 == PIN_STRAP_HIGH) &&
-		(platform == BOARD_ID_HACKRF1_OG)) {
+		(platform_id == BOARD_ID_HACKRF1_OG)) {
 		revision = BOARD_REV_HACKRF1_R6;
 	} else if (
 		(adc0_3 == PIN_STRAP_LOW) && (adc0_4 == PIN_STRAP_HIGH) &&
-		(platform == BOARD_ID_HACKRF1_OG)) {
+		(platform_id == BOARD_ID_HACKRF1_OG)) {
 		revision = BOARD_REV_HACKRF1_R7;
 	} else if (
 		(adc0_3 == PIN_STRAP_HIGH) && (adc0_4 == PIN_STRAP_LOW) &&
-		(platform == BOARD_ID_HACKRF1_OG)) {
+		(platform_id == BOARD_ID_HACKRF1_OG)) {
 		revision = BOARD_REV_HACKRF1_R8;
 	} else if (
 		(adc0_3 == PIN_STRAP_LOW) && (adc0_4 == PIN_STRAP_LOW) &&
-		(platform == BOARD_ID_HACKRF1_R9)) {
+		(platform_id == BOARD_ID_HACKRF1_R9)) {
 		revision = BOARD_REV_HACKRF1_R9;
 	} else {
 		revision = BOARD_REV_UNRECOGNIZED;
@@ -207,9 +207,9 @@ void detect_hardware_platform(void)
 	}
 }
 
-board_id_t detected_platform(void)
+board_id_t detected_platform_id(void)
 {
-	return platform;
+	return platform_id;
 }
 
 board_rev_t detected_revision(void)

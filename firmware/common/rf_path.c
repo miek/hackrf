@@ -105,12 +105,12 @@ static struct gpio_t gpio_h1r9_no_ant_pwr = GPIO(2, 4);
 static void switchctrl_set_hackrf_one(rf_path_t* const rf_path, uint8_t ctrl)
 {
 	if (ctrl & SWITCHCTRL_TX) {
-		if (detected_platform() != BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() != BOARD_ID_HACKRF1_R9) {
 			gpio_set(rf_path->gpio_tx);
 		}
 		gpio_clear(rf_path->gpio_rx);
 	} else {
-		if (detected_platform() != BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() != BOARD_ID_HACKRF1_R9) {
 			gpio_clear(rf_path->gpio_tx);
 		}
 		gpio_set(rf_path->gpio_rx);
@@ -173,7 +173,7 @@ static void switchctrl_set_hackrf_one(rf_path_t* const rf_path, uint8_t ctrl)
 		gpio_set(rf_path->gpio_no_rx_amp_pwr);
 	}
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		if (ctrl & SWITCHCTRL_ANT_PWR) {
 			gpio_clear(&gpio_h1r9_no_ant_pwr);
 		} else {
@@ -289,7 +289,7 @@ void rf_path_pin_setup(rf_path_t* const rf_path)
 	scu_pinmux(SCU_RX_AMP,        SCU_GPIO_FAST | SCU_CONF_FUNCTION0);
 	scu_pinmux(SCU_NO_RX_AMP_PWR, SCU_GPIO_FAST | SCU_CONF_FUNCTION0);
 	// clang-format on
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		scu_pinmux(SCU_H1R9_RX, SCU_GPIO_FAST | SCU_CONF_FUNCTION0);
 		scu_pinmux(SCU_H1R9_NO_ANT_PWR, SCU_GPIO_FAST | SCU_CONF_FUNCTION0);
 		gpio_clear(&gpio_h1r9_no_ant_pwr);
@@ -369,7 +369,7 @@ void rf_path_init(rf_path_t* const rf_path)
 	max5864_setup(&max5864);
 	max5864_shutdown(&max5864);
 
-	if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+	if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 		ssp1_set_mode_max2839();
 		max283x_setup(&max283x, MAX2839_VARIANT);
 	} else {
@@ -404,7 +404,7 @@ void rf_path_set_direction(rf_path_t* const rf_path, const rf_path_direction_t d
 		}
 		ssp1_set_mode_max5864();
 		max5864_tx(&max5864);
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			ssp1_set_mode_max2839();
 		} else {
 			ssp1_set_mode_max2837();
@@ -427,7 +427,7 @@ void rf_path_set_direction(rf_path_t* const rf_path, const rf_path_direction_t d
 		}
 		ssp1_set_mode_max5864();
 		max5864_rx(&max5864);
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			ssp1_set_mode_max2839();
 		} else {
 			ssp1_set_mode_max2837();
@@ -447,7 +447,7 @@ void rf_path_set_direction(rf_path_t* const rf_path, const rf_path_direction_t d
 		mixer_disable(&mixer);
 		ssp1_set_mode_max5864();
 		max5864_standby(&max5864);
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			ssp1_set_mode_max2839();
 		} else {
 			ssp1_set_mode_max2837();

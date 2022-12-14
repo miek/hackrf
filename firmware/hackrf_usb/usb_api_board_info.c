@@ -45,7 +45,7 @@ usb_request_status_t usb_vendor_request_read_board_id(
 	const usb_transfer_stage_t stage)
 {
 	if (stage == USB_TRANSFER_STAGE_SETUP) {
-		endpoint->buffer[0] = detected_platform();
+		endpoint->buffer[0] = detected_platform_id();
 		usb_transfer_schedule_block(
 			endpoint->in,
 			&endpoint->buffer,
@@ -135,7 +135,7 @@ usb_request_status_t usb_vendor_request_reset(
 		 * Set boot pins as inputs so that the bootloader reads them
 		 * correctly after the reset.
 		 */
-		if (detected_platform() == BOARD_ID_HACKRF1_R9) {
+		if (detected_platform_id() == BOARD_ID_HACKRF1_R9) {
 			gpio_input(&gpio_h1r9_mcu_clk_en);
 			gpio_input(&gpio_h1r9_clkout_en);
 			gpio_input(&gpio_h1r9_rx);
