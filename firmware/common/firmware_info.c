@@ -20,7 +20,7 @@
  */
 
 #include "firmware_info.h"
-#include "platform_detect.h"
+#include "platform/platform.h"
 #include "gpio_lpc.h"
 #include "hackrf_core.h"
 
