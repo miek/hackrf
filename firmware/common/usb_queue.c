@@ -240,4 +240,9 @@ void usb_queue_transfer_complete(usb_endpoint_t* const endpoint)
 		free_transfer(transfer);
 		transfer = next;
 	}
+
+	if (*endpoint->device->test_mode != 0) {
+		USB0_PORTSC1_D |= USB0_PORTSC1_D_PTC3_0(*endpoint->device->test_mode);
+		*endpoint->device->test_mode = 0;
+	}
 }

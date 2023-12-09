@@ -45,6 +45,8 @@ usb_configuration_t* usb_configurations[] = {
 	0,
 };
 
+uint8_t usb_test_mode = 0;
+
 usb_device_t usb_device = {
 	.descriptor = usb_descriptor_device,
 	.descriptor_strings = usb_descriptor_strings,
@@ -53,4 +55,5 @@ usb_device_t usb_device = {
 	.configuration = 0,
 	.wcid_string_descriptor = wcid_string_descriptor,
 	.wcid_feature_descriptor = wcid_feature_descriptor,
+	.test_mode = &usb_test_mode,
 };

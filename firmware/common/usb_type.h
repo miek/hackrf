@@ -79,7 +79,15 @@ typedef enum {
 
 typedef enum {
 	USB_FEATURE_SELECTOR_ENDPOINT_HALT = 0,
+	USB_FEATURE_SELECTOR_TEST_MODE = 2,
 } usb_feature_selector_t;
+
+typedef enum {
+	USB_TEST_MODE_SELECTOR_TEST_J = 1,
+	USB_TEST_MODE_SELECTOR_TEST_K = 2,
+	USB_TEST_MODE_SELECTOR_TEST_SE0_NAK = 3,
+	USB_TEST_MODE_SELECTOR_TEST_PACKET = 4,
+} usb_test_mode_selector_t;
 
 typedef enum {
 	USB_SETUP_REQUEST_TYPE_shift = 5,
@@ -144,6 +152,7 @@ typedef struct {
 	uint8_t* wcid_string_descriptor;
 	uint8_t* wcid_feature_descriptor;
 	uint8_t* wcid_extended_properties_descriptor;
+	uint8_t* test_mode;
 } usb_device_t;
 
 typedef struct usb_endpoint_t usb_endpoint_t;

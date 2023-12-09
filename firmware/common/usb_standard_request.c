@@ -428,6 +428,45 @@ static usb_request_status_t usb_standard_request_clear_feature(
 	}
 }
 
+static uint8_t test_mode = 0;
+static usb_request_status_t usb_standard_request_set_feature_setup(
+	usb_endpoint_t* const endpoint)
+{
+	switch (endpoint->setup.value) {
+	case USB_FEATURE_SELECTOR_TEST_MODE:
+		if (endpoint->setup.index_h < 0x05) {
+			test_mode = endpoint->setup.index_h;
+			usb_transfer_schedule_ack(endpoint->in);
+			return USB_REQUEST_STATUS_OK;
+		} else {
+			return USB_REQUEST_STATUS_STALL;
+		}
+	default:
+		return USB_REQUEST_STATUS_STALL;
+	}
+}
+
+static usb_request_status_t usb_standard_request_set_feature(
+	usb_endpoint_t* const endpoint,
+	const usb_transfer_stage_t stage)
+{
+	switch (stage) {
+	case USB_TRANSFER_STAGE_SETUP:
+		return usb_standard_request_set_feature_setup(endpoint);
+
+	case USB_TRANSFER_STAGE_DATA:
+		return USB_REQUEST_STATUS_OK;
+	case USB_TRANSFER_STAGE_STATUS:
+		if (test_mode != 0) {
+			*endpoint->device->test_mode = test_mode;
+		}
+		return USB_REQUEST_STATUS_OK;
+
+	default:
+		return USB_REQUEST_STATUS_STALL;
+	}
+}
+
 /*********************************************************************/
 
 usb_request_status_t usb_standard_request(
@@ -452,6 +491,9 @@ usb_request_status_t usb_standard_request(
 
 	case USB_STANDARD_REQUEST_CLEAR_FEATURE:
 		return usb_standard_request_clear_feature(endpoint, stage);
+
+	case USB_STANDARD_REQUEST_SET_FEATURE:
+		return usb_standard_request_set_feature(endpoint, stage);
 
 	default:
 		return USB_REQUEST_STATUS_STALL;
