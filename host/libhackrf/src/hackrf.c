@@ -1141,7 +1141,7 @@ int ADDCALL hackrf_rffc5071_read(
 {
 	int result;
 
-	if (register_number >= 31) {
+	if (register_number > 31) {
 		return HACKRF_ERROR_INVALID_PARAM;
 	}
 

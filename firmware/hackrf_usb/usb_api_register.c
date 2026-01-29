@@ -162,7 +162,7 @@ usb_request_status_t usb_vendor_request_write_rffc5071(
 	const usb_transfer_stage_t stage)
 {
 	if (stage == USB_TRANSFER_STAGE_SETUP) {
-		if (endpoint->setup.index < RFFC5071_NUM_REGS) {
+		if (endpoint->setup.index <= RFFC5071_NUM_REGS) {
 			rffc5071_reg_write(
 				&mixer,
 				endpoint->setup.index,
@@ -182,7 +182,7 @@ usb_request_status_t usb_vendor_request_read_rffc5071(
 {
 	uint16_t value;
 	if (stage == USB_TRANSFER_STAGE_SETUP) {
-		if (endpoint->setup.index < RFFC5071_NUM_REGS) {
+		if (endpoint->setup.index <= RFFC5071_NUM_REGS) {
 			value = rffc5071_reg_read(&mixer, endpoint->setup.index);
 			endpoint->buffer[0] = value & 0xff;
 			endpoint->buffer[1] = value >> 8;
