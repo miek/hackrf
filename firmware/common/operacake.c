@@ -120,6 +120,7 @@ void operacake_write_reg(i2c_bus_t* const bus, uint8_t address, uint8_t reg, uin
 
 uint8_t operacake_init(bool allow_gpio)
 {
+	return 0;
 	/* Find connected operacakes */
 	for (int addr = 0; addr < 8; addr++) {
 		operacake_write_reg(

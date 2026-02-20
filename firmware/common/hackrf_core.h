@@ -371,7 +371,7 @@ extern "C" {
 #define SCU_PINMUX_SD_CD    (P1_13) /* GPIO1[6] */
 
 #define SCU_PINMUX_PP_IO_STBX (P2_0) /* GPIO5[0] */
-#define SCU_PINMUX_PP_ADDR    (P2_1) /* GPIO5[1] */
+#define SCU_PINMUX_PP_LCD_RS  (PE_0) /* GPIO7[0] */
 #define SCU_PINMUX_U0_TXD     (P2_0) /* GPIO5[0] */
 #define SCU_PINMUX_U0_RXD     (P2_1) /* GPIO5[1] */
 
